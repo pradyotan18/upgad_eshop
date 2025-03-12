@@ -1,0 +1,16 @@
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signup-paper {
+  padding: 20px;
+  text-align: center;
+}
+
+.error-text {
+  color: red;
+  margin-bottom: 10px;
+}
