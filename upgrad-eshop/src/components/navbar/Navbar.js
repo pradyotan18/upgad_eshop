@@ -17,7 +17,7 @@ const Navbar = ({ isLoggedIn, isAdmin, handleLogout }) => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate(`/products?search=${searchTerm}`);
+    navigate(`/AddProduct?search=${encodeURIComponent(searchTerm)}`);
   };
 
   return (

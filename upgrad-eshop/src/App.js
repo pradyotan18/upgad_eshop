@@ -9,6 +9,7 @@ import ProductDetails from "./components/productDetails.js/ProductDetails";
 import CreateOrder from "./components/createOrder/CreateOrder";
 import CreateProduct from "./components/addProduct/CreateProduct";
 import EditProduct from "./components/addProduct/EditProduct";
+import axios from "axios";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -37,12 +38,32 @@ function App() {
     setIsAdmin(false);
   };
 
+  const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(
+        "https://dev-project-ecommerce.upgrad.dev/api/products"
+      );
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
   return (
     <Router>
       <Navbar
         isLoggedIn={isLoggedIn}
         isAdmin={isAdmin}
         handleLogout={handleLogout}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -53,7 +74,10 @@ function App() {
           }
         />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/AddProduct" element={<AddProduct />} />
+        <Route
+          path="/AddProduct"
+          element={<AddProduct products={products} searchTerm={searchTerm} />}
+        />
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/create-order" element={<CreateOrder />} />
         <Route path="/create-product" element={<CreateProduct />} />

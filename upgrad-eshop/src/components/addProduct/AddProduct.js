@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -24,6 +24,9 @@ const AddProduct = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState("default");
   const userRole = JSON.parse(localStorage.getItem("userRoles")) || [];
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchTerm = queryParams.get("search") || "";
 
   useEffect(() => {
     fetchCategories();
@@ -97,7 +100,11 @@ const AddProduct = () => {
     }
   };
 
-  const sortedProducts = [...products]
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const sortedProducts = [...filteredProducts] // Use filteredProducts instead of products
     .filter((product) =>
       selectedCategory === "all" ? true : product.category === selectedCategory
     )
@@ -106,7 +113,7 @@ const AddProduct = () => {
       if (sortOrder === "priceLow") return a.price - b.price;
       if (sortOrder === "newest")
         return new Date(b.createdAt) - new Date(a.createdAt);
-      return 0; // Default order
+      return 0;
     });
 
   return (
@@ -137,7 +144,7 @@ const AddProduct = () => {
       </Select>
 
       <Grid container spacing={3}>
-        {sortedProducts.map((product) => (
+        {filteredProducts.map((product) => (
           <Grid item key={product.id} xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
